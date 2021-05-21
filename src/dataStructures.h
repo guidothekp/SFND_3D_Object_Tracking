@@ -35,6 +35,9 @@ struct DataFrame { // represents the available sensor information at the same ti
 
     std::vector<BoundingBox> boundingBoxes; // ROI around detected objects in 2D image coordinates
     std::map<int,int> bbMatches; // bounding box matches between previous and current frame
+    void operator = (cv::Mat & image) {
+        cameraImg = image;
+    }
 };
 
 #endif /* dataStructures_h */

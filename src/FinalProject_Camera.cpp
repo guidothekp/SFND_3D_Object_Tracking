@@ -90,7 +90,11 @@ int main(int argc, const char *argv[])
 
         // push image into data frame buffer
         DataFrame frame;
-        frame.cameraImg = img;
+        frame = img;
+        //frame.cameraImg = img;
+        if (dataBuffer.size() == dataBufferSize) {
+            dataBuffer.erase(dataBuffer.begin());
+        }
         dataBuffer.push_back(frame);
 
         cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
@@ -129,7 +133,7 @@ int main(int argc, const char *argv[])
         clusterLidarWithROI((dataBuffer.end()-1)->boundingBoxes, (dataBuffer.end() - 1)->lidarPoints, shrinkFactor, P_rect_00, R_rect_00, RT);
 
         // Visualize 3D objects
-        bVis = true;
+        bVis = false;
         if(bVis)
         {
             show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(2000, 2000), true);
@@ -140,7 +144,7 @@ int main(int argc, const char *argv[])
         
         
         // REMOVE THIS LINE BEFORE PROCEEDING WITH THE FINAL PROJECT
-        continue; // skips directly to the next image without processing what comes beneath
+        //continue; // skips directly to the next image without processing what comes beneath
 
         /* DETECT IMAGE KEYPOINTS */
 
@@ -151,16 +155,19 @@ int main(int argc, const char *argv[])
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
         string detectorType = "SHITOMASI";
-
+        double detectTime = 0;
+        bool show = false;
         if (detectorType.compare("SHITOMASI") == 0)
         {
-            detKeypointsShiTomasi(keypoints, imgGray, false);
+            detectTime = detKeypointsShiTomasi(keypoints, imgGray, show);
         }
-        else
+        else if (detectorType.compare("HARRIS") == 0) 
         {
-            //...
+            detectTime = detKeypointsHarris(keypoints, imgGray, show);
+        } else {
+            detectTime = detKeypointsModern(keypoints, imgGray, detectorType, show);
         }
-
+        //metrics.detectionTimes.push_back(detectTime);
         // optional : limit number of keypoints (helpful for debugging and learning)
         bool bLimitKpts = false;
         if (bLimitKpts)
@@ -185,7 +192,10 @@ int main(int argc, const char *argv[])
 
         cv::Mat descriptors;
         string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
-        descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
+        double descriptorTime = 
+            descKeypoints((dataBuffer.end() - 1)->keypoints, 
+                    (dataBuffer.end() - 1)->cameraImg, 
+                    descriptors, descriptorType);
 
         // push descriptors for current frame to end of data buffer
         (dataBuffer.end() - 1)->descriptors = descriptors;

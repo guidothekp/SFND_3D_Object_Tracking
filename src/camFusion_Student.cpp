@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <numeric>
+#include <unordered_map>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
@@ -9,7 +10,8 @@
 #include "dataStructures.h"
 
 using namespace std;
-
+using BoundingBoxID = int;
+using KeyPointPtr = cv::KeyPoint*;
 
 // Create groups of Lidar points whose projection into the camera falls into the same bounding box
 void clusterLidarWithROI(std::vector<BoundingBox> &boundingBoxes, std::vector<LidarPoint> &lidarPoints, float shrinkFactor, cv::Mat &P_rect_xx, cv::Mat &R_rect_xx, cv::Mat &RT)
@@ -62,10 +64,10 @@ void clusterLidarWithROI(std::vector<BoundingBox> &boundingBoxes, std::vector<Li
 }
 
 /* 
-* The show3DObjects() function below can handle different output image sizes, but the text output has been manually tuned to fit the 2000x2000 size. 
-* However, you can make this function work for other sizes too.
-* For instance, to use a 1000x1000 size, adjusting the text positions by dividing them by 2.
-*/
+ * The show3DObjects() function below can handle different output image sizes, but the text output has been manually tuned to fit the 2000x2000 size. 
+ * However, you can make this function work for other sizes too.
+ * For instance, to use a 1000x1000 size, adjusting the text positions by dividing them by 2.
+ */
 void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, cv::Size imageSize, bool bWait)
 {
     // create topview image
@@ -144,20 +146,162 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 
 // Compute time-to-collision (TTC) based on keypoint correspondences in successive images
 void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
-                      std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC, cv::Mat *visImg)
+        std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC, cv::Mat *visImg)
 {
     // ...
 }
 
 
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
-                     std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
+        std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
     // ...
 }
 
+using queryIndex = int; 
+using trainIndex = int; 
+void convertMatchesToBBoxes(const std::vector<cv::DMatch> & matches, 
+        const std::unordered_map<queryIndex, BoundingBoxID> & queryMapping, 
+        const std::unordered_map<trainIndex, BoundingBoxID> & trainingMapping, 
+        std::map<BoundingBoxID, BoundingBoxID> & bbBestMatches) {
+    std::unordered_map<queryIndex, std::vector<cv::DMatch*>*> queryIndexToMatches;
+    //assume that the data is not clean and a single queryIndex maps to
+    //multiple matches.
+    for (const auto & match : matches) {
+        queryIndex q = match.queryIdx;
+        if (queryMapping.find(q) == queryMapping.end()) {
+            continue;
+        }
+        std::vector<cv::DMatch*>* sv;
+        if (queryIndexToMatches.find(q) == queryIndexToMatches.end()) {
+            std::vector<cv::DMatch*>* sv = new std::vector<cv::DMatch*>;
+            queryIndexToMatches[q] = sv;
+        }
+        sv = queryIndexToMatches.at(q); //cannot fail
+        sv->push_back(const_cast<cv::DMatch*>(&match));
+    }
+    for (auto it = queryIndexToMatches.begin();
+            it != queryIndexToMatches.end(); it ++) {
+        assert(it->second->size() <= 1);
+    }
+    std::cout << "query size = " << queryIndexToMatches.size() << std::endl;
+    assert(queryIndexToMatches.size() == queryMapping.size());
+    for (auto it = queryMapping.begin(); it != queryMapping.end(); it ++) {
+        std::vector<cv::DMatch*>* match = queryIndexToMatches.at(it->first);
+        trainIndex t = match->at(0)->trainIdx;
+        if (trainingMapping.find(t) == trainingMapping.end()) {
+            continue;
+        }
+        BoundingBoxID qB = it->second;
+        BoundingBoxID tB = trainingMapping.at(t);
+        bbBestMatches[qB] = tB;
+    }
+}
+std::unordered_map<int, BoundingBoxID> prepareKeyPointBoundingBoxID(
+        const DataFrame & frame);
 
-void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
+/** 
+ * 1. current frame has the matches with the previous one. 
+ * 2. both frames also have bounding boxes for each image.
+ * 3. we don't know which bounding box corresponds to which.
+ * 4. we need to use the matches as the hint to figure out this match.
+ * 5. we first need to map keypoints to bounding boxes in each frame. 
+ * 6. in each frame, we will have a situation where a keypoint falls in
+ * multiple bounding boxes. these we call problematic ones. the keypoints that
+ * map to exactly one bounding box will be used immediately.
+ * 7. if a keypoint falls in multiple bounding boxes, it gets assigned to the
+ * one with the largest (if any) or first one (in case of tie).
+ * 8. at this point, we have keypoints to boundingbox mapping.
+ * 9. we remove from the matchees object all keypoints that do not have a bounding box.
+ * 9. we then translate the matches to bounding boxes. this will give us an
+ * object with the boundingbox matches.
+ * 10. we fill the map with these matches and return.
+ */
+void matchBoundingBoxes(const std::vector<cv::DMatch> & matches, 
+        std::map<int, int> &bbBestMatches, 
+        const DataFrame & prevFrame, const DataFrame & currFrame)
 {
-    // ...
+    std::unordered_map<int, BoundingBoxID> prevMapping = 
+        prepareKeyPointBoundingBoxID(prevFrame); //query
+    std::unordered_map<int, BoundingBoxID> currMapping = 
+        prepareKeyPointBoundingBoxID(currFrame); //train
+    convertMatchesToBBoxes(matches, prevMapping, currMapping, bbBestMatches);
+}
+
+std::unordered_map<int, BoundingBoxID> prepareKeyPointBoundingBoxID(
+        const DataFrame & frame) {
+    const std::vector<cv::KeyPoint> & keyPoints = frame.keypoints;
+    const std::vector<BoundingBox> & boundingBoxes = frame.boundingBoxes;
+    std::unordered_map<cv::KeyPoint*, int> keyPointToIdx;
+    std::unordered_map<cv::KeyPoint*, std::vector<BoundingBox*>*> mapping;
+    std::unordered_map<BoundingBox*, size_t> bbCount;
+    for (size_t i = 0; i < keyPoints.size(); i ++) {
+        const cv::KeyPoint & kp = keyPoints[i];
+        keyPointToIdx[const_cast<cv::KeyPoint*>(&kp)] = i;
+        for (const BoundingBox & bb : boundingBoxes) {
+            if (bb.roi.contains(kp.pt)) {
+                cv::KeyPoint* kptr = const_cast<cv::KeyPoint*>(&kp);
+                BoundingBox* bbptr = const_cast<BoundingBox*>(&bb);
+                if (mapping.find(kptr) == mapping.end()) {
+                    std::vector<BoundingBox*>* sb = new std::vector<BoundingBox*>;
+                    mapping[kptr] = sb;
+                }
+                std::vector<BoundingBox*>* sb = mapping.at(kptr);
+                sb->push_back(bbptr);
+                mapping.at(kptr) = sb;
+                if (bbCount.find(bbptr) == bbCount.end()) {
+                    bbCount[bbptr] = 0;
+                }
+                bbCount[bbptr] += 1;
+            }
+        }
+    }
+    //at this point we have a map of keypoint to matching bounding boxes.
+    std::unordered_map<cv::KeyPoint*, BoundingBoxID> rmap;
+    std::vector<cv::KeyPoint*> toRemove;
+    std::vector<cv::KeyPoint*> conflicts;
+    std::cout << "mapping size = " << mapping.size() << std::endl;
+    for (auto it = mapping.begin(); it != mapping.end(); it ++) {
+        std::vector<BoundingBox*>* sv = it->second;
+        BoundingBox* bbptr = sv->at(0);
+        if (sv->size() == 1) {
+            rmap[it->first]  = bbptr->boxID;
+            toRemove.push_back(it->first);
+        } else {
+            conflicts.push_back(it->first);
+        }
+    }
+    assert(mapping.size() == toRemove.size() + conflicts.size());
+    //we are now left with those that match multiple bounding boxes.
+    for (cv::KeyPoint* kp : conflicts) {
+        std::vector<BoundingBox*>* sv = mapping.at(kp);
+        assert(sv->size() > 1);
+        size_t max = 0;
+        BoundingBox* maxBox;
+        for (auto it2 = sv->begin(); it2 != sv->end(); it2 ++) {
+            BoundingBox* bb = *it2;
+            size_t count = bbCount.at(bb);
+            if (count > max) {
+                max = count;
+                maxBox = bb;
+            }
+        }
+        rmap[kp] = maxBox->boxID;
+        toRemove.push_back(kp);
+    }
+    assert(mapping.size() == toRemove.size());
+    for (auto key : toRemove) {
+        std::vector<BoundingBox*>* sv = mapping.at(key); //cannot fail here, use at instead of []
+        mapping.erase(key);
+        sv->clear();
+        delete(sv);
+    }
+    assert(mapping.size() == 0);
+    conflicts.clear();
+    toRemove.clear();
+    std::unordered_map<int, BoundingBoxID> rv;
+    for (auto it = rmap.begin(); it != rmap.end(); it ++) {
+        rv[keyPointToIdx[it->first]] = it->second;
+    }
+    return rv;
 }
