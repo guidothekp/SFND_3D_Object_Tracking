@@ -110,8 +110,8 @@ that the images show not much has changed. But the TTC for Lidar has jumped
 big. 
 
 Topview of Frame #2 vs Frame #3
-![frame 2](../report/3dObject_2.jpg "Frame 2")
-![frame 3](../report/3dObject_3.jpg "Frame 3")
+![frame 2](report/3dObject_2.jpg "Frame 2")
+![frame 3](report/3dObject_3.jpg "Frame 3")
 
 The remaining pictures can be seen in the reports folder under
 3dObject_<number>.jpg.
@@ -153,4 +153,4 @@ car.
 ## FP.6 Performance Evaluation 2
 ######Run several detector / descriptor combinations and look at the differences in TTC estimation. Find out which methods perform best and also include several examples where camera-based TTC estimation is way off. As with Lidar, describe your observations again and also look into potential reasons.
 
-<img src="detector_descriptor_summary_stats.png"/>
+<img src="report/detector_descriptor_summary_stats.png"/>
