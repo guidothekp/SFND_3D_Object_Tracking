@@ -62,7 +62,7 @@ void matchBoundingBoxes(const std::vector<cv::DMatch> & matches,
 ```
 
 The details of the code are in camFusion_Student.cpp.
-##FP.2 Compute Lidar-based TTC
+## FP.2 Compute Lidar-based TTC
 
 ###### Compute the time-to-collision in second for all matched 3D objects using only Lidar measurements from the matched bounding boxes between current and previous frame.
 
@@ -78,7 +78,7 @@ Code in camFusion_Student.cpp
 
 Code in camFusion_Student.cpp
 
-##FP.5 Performance Evaluation 1
+## FP.5 Performance Evaluation 1
 ###### Find examples where the TTC estimate of the Lidar sensor does not seem plausible. Describe your observations and provide a sound argumentation why you think this happened.
 
 First off, let us look at the results we got when we worked with the entire
@@ -111,9 +111,12 @@ big.
 
 Topview of Frame #2 vs Frame #3  
 Frame #2:  
-* <img src="report/3dObject_2.jpg" height="500" width="779"/>
+***
+ <img src="report/3dObject_2.jpg" height="500" width="779"/>  
+***  
 Frame #3:  
-* <img src="report/3dObject_3.jpg" height="500" width="779"/>
+<img src="report/3dObject_3.jpg" height="500" width="779"/>  
+***  
 
 The remaining pictures can be seen in the reports folder under
 3dObject_number.jpg.
