@@ -109,10 +109,10 @@ If we look closely at entries at lines 2 and 3, 7 and 8, and 13 and 14, we note
 that the images show not much has changed. But the TTC for Lidar has jumped
 big. 
 
-Topview of Frame #2 vs Frame #3
-Frame #2:
+Topview of Frame #2 vs Frame #3  
+Frame #2:  
 * <img src="report/3dObject_2.jpg" height="500" width="779"/>
-Frame #3:
+Frame #3:  
 * <img src="report/3dObject_3.jpg" height="500" width="779"/>
 
 The remaining pictures can be seen in the reports folder under
