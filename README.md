@@ -111,10 +111,9 @@ big.
 
 Topview of Frame #2 vs Frame #3
 Frame #2:
-<img src="report/3dObject_2.jpg" height="500" width="779"/>
-&nbsp;
+*<img src="report/3dObject_2.jpg" height="500" width="779"/>
 Frame #3:
-<img src="report/3dObject_3.jpg" height="500" width="779"/>
+*<img src="report/3dObject_3.jpg" height="500" width="779"/>
 
 The remaining pictures can be seen in the reports folder under
 3dObject_number.jpg.
@@ -157,7 +156,7 @@ car.
 ###### Run several detector / descriptor combinations and look at the differences in TTC estimation. Find out which methods perform best and also include several examples where camera-based TTC estimation is way off. As with Lidar, describe your observations again and also look into potential reasons.
 
 The data from various runs is summarized below. The actual data can be found in
-the file ttc_camera_detector_descriptor.xlsx.
+the file ttc_camera_detector_descriptor.xlsx in the report folder.
 
 <img src="report/detector_descriptor_summary_stats.png"/>
 
