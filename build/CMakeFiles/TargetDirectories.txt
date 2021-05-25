@@ -1,4 +1,3 @@
 /Users/kamesh/work/development/SFND_3D_Object_Tracking_take2/build/CMakeFiles/rebuild_cache.dir
 /Users/kamesh/work/development/SFND_3D_Object_Tracking_take2/build/CMakeFiles/edit_cache.dir
-/Users/kamesh/work/development/SFND_3D_Object_Tracking_take2/build/CMakeFiles/3D_object_tracking_alldetectors.dir
 /Users/kamesh/work/development/SFND_3D_Object_Tracking_take2/build/CMakeFiles/3D_object_tracking.dir

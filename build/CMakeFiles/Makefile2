@@ -72,7 +72,6 @@ CMAKE_BINARY_DIR = /Users/kamesh/work/development/SFND_3D_Object_Tracking_take2/
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/3D_object_tracking_alldetectors.dir/all
 all: CMakeFiles/3D_object_tracking.dir/all
 
 .PHONY : all
@@ -83,37 +82,9 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/3D_object_tracking_alldetectors.dir/clean
 clean: CMakeFiles/3D_object_tracking.dir/clean
 
 .PHONY : clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/3D_object_tracking_alldetectors.dir
-
-# All Build rule for target.
-CMakeFiles/3D_object_tracking_alldetectors.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/3D_object_tracking_alldetectors.dir/build.make CMakeFiles/3D_object_tracking_alldetectors.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/3D_object_tracking_alldetectors.dir/build.make CMakeFiles/3D_object_tracking_alldetectors.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/kamesh/work/development/SFND_3D_Object_Tracking_take2/build/CMakeFiles --progress-num=7,8,9,10,11,12 "Built target 3D_object_tracking_alldetectors"
-.PHONY : CMakeFiles/3D_object_tracking_alldetectors.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/3D_object_tracking_alldetectors.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kamesh/work/development/SFND_3D_Object_Tracking_take2/build/CMakeFiles 6
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/3D_object_tracking_alldetectors.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kamesh/work/development/SFND_3D_Object_Tracking_take2/build/CMakeFiles 0
-.PHONY : CMakeFiles/3D_object_tracking_alldetectors.dir/rule
-
-# Convenience name for target.
-3D_object_tracking_alldetectors: CMakeFiles/3D_object_tracking_alldetectors.dir/rule
-
-.PHONY : 3D_object_tracking_alldetectors
-
-# clean rule for target.
-CMakeFiles/3D_object_tracking_alldetectors.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/3D_object_tracking_alldetectors.dir/build.make CMakeFiles/3D_object_tracking_alldetectors.dir/clean
-.PHONY : CMakeFiles/3D_object_tracking_alldetectors.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/3D_object_tracking.dir

@@ -348,30 +348,5 @@ int main(int argc, const char *argv[])
         }
 
     } // eof loop over all images
-    //std::cout << "press something to end...\n";
-    //cv::waitKey(0);
-    //std::cout << "*******************************" << std::endl;
-    //std::cout << DETECTOR << "_" << DESCRIPTOR << ", ";
-    /*for (auto ttc : ttcs) {
-        std::cout << ttc << "   ";
-    }
-    */
-    /*
-    std::cout << *std::max_element(std::begin(ttcs), std::end(ttcs)) <<  ", ";
-    std::cout << *std::min_element(std::begin(ttcs), std::end(ttcs)) <<  ", ";
-
-    double sum = std::accumulate(ttcs.begin(), ttcs.end(), 0.0);
-    double mean = sum / ttcs.size();
-
-    std::vector<double> diff(ttcs.size());
-    std::transform(ttcs.begin(), ttcs.end(), diff.begin(), [mean](double x) { return x - mean; });
-    double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
-    double stdev = std::sqrt(sq_sum / ttcs.size());
-
-    std::cout << mean;
-    std::cout << ", ";
-    std::cout << stdev;
-    */
-    //std::cout << "**********************************" << std::endl;
     return 0;
 }
