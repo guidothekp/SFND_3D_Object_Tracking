@@ -68,18 +68,18 @@ The details of the code are in camFusion_Student.cpp.
 
 The code is shown in camFusion_Student.cpp
 
-##FP.3 Associate Keypoint Correspondences with Bounding Boxes
+## FP.3 Associate Keypoint Correspondences with Bounding Boxes
 ###### Compute the time-to-collision in second for all matched 3D objects using only keypoint correspondences from the matched bounding boxes between current and previous frame.
 
 Code in camFusion_Student.cpp
 
-##FP.4 Compute Camera-based TTC
-######Compute the time-to-collision in second for all matched 3D objects using only keypoint correspondences from the matched bounding boxes between current and previous frame.
+## FP.4 Compute Camera-based TTC
+###### Compute the time-to-collision in second for all matched 3D objects using only keypoint correspondences from the matched bounding boxes between current and previous frame.
 
 Code in camFusion_Student.cpp
 
 ##FP.5 Performance Evaluation 1
-######Find examples where the TTC estimate of the Lidar sensor does not seem plausible. Describe your observations and provide a sound argumentation why you think this happened.
+###### Find examples where the TTC estimate of the Lidar sensor does not seem plausible. Describe your observations and provide a sound argumentation why you think this happened.
 
 First off, let us look at the results we got when we worked with the entire
 LIDAR data.
@@ -110,11 +110,14 @@ that the images show not much has changed. But the TTC for Lidar has jumped
 big. 
 
 Topview of Frame #2 vs Frame #3
-<img src="report/3dObject_2.jpg" height="414" width="779"/><br/>
-<img src="report/3dObject_3.jpg" height="414" width="779"/>
+Frame #2:
+<img src="report/3dObject_2.jpg" height="500" width="779"/>
+&nbsp;
+Frame #3:
+<img src="report/3dObject_3.jpg" height="500" width="779"/>
 
 The remaining pictures can be seen in the reports folder under
-3dObject_<number>.jpg.
+3dObject_number.jpg.
 
 Could this be due to the fact we are taking median of the entire data set? The
 answer is a definite no. 
@@ -151,6 +154,42 @@ the car in the right lane ahead might have its points counted in the current
 car.
 
 ## FP.6 Performance Evaluation 2
-######Run several detector / descriptor combinations and look at the differences in TTC estimation. Find out which methods perform best and also include several examples where camera-based TTC estimation is way off. As with Lidar, describe your observations again and also look into potential reasons.
+###### Run several detector / descriptor combinations and look at the differences in TTC estimation. Find out which methods perform best and also include several examples where camera-based TTC estimation is way off. As with Lidar, describe your observations again and also look into potential reasons.
+
+The data from various runs is summarized below. The actual data can be found in
+the file ttc_camera_detector_descriptor.xlsx.
 
 <img src="report/detector_descriptor_summary_stats.png"/>
+
+The points to observe are the following:
+* I could not run AKAZE with any configuration.
+* ORB does not work with SIFT. OpenCV code dies with an exception.
+* FAST-FREAK is consistently the best. The best are highlighted in red per
+  category and FAST-FREAK tops everytime.
+* I have observed that there are repeatable examples where the lidar points
+  could not be found. That is why there are empty entries in some of the cells.
+  This happens because the bounding box association code is not able to match
+  the bounding boxes correctly. Though I am not entirely sure why this happens,
+  the conjecture is that the points in various bounding boxes are very close so
+  the tie breakers are not very good. The tie breaker I used was one where the
+  bounding box with more committed (keypoints with exactly one bounding box are
+  used for the count) keypoints are preferred as tie breaker. 
+* This tie breaker sometimes leads to associations that show up in some runs while not in other.
+* In general, most of the detector-descriptors are close to each other. An
+  exception is SIFT-FREAK that starts out with a huge prediction that improves
+  in the subsequent frames. I ran this a few times and the numbers are exact in
+  every run, implying this was not a bug from code.
+* The top 3 of the last time -- FAST detector with BRISK, BRIEF, and ORB are
+  still around this time as well, though in the top 4.
+* I figured that an accurate detector will provide smoother TTCs between
+  frames. Clearly, that is not the case. SIFT performs poorly when used as a
+  detector.
+* The fact that SIFT does well as a descriptor, IMO, is telling. The keypoint
+  matching is what the entire edifice is built on. Since the descriptors are
+  used for matching, one would expect better descriptors to do better. But,
+  the level of detail that SIFT picks up turns out to be not so important.
+* I did the runs manually so these are the ones I could get around to.
+* Another criterion I used was to check which of the combinations works around
+  the jump between frames 2 and 3. FAST-ORB, FAST-FREAK, FAST-SIFT, SIFT-BRIEF,
+  fail this test. In the light of this, I would suggest FAST-BRISK or
+  FAST-BRIEF as the way to go for estimating Camera TTC.
