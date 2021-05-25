@@ -53,7 +53,8 @@ void loadLidarFromFile(vector<LidarPoint> &lidarPoints, string filename)
 }
 
 
-void showLidarTopview(std::vector<LidarPoint> &lidarPoints, cv::Size worldSize, cv::Size imageSize, bool bWait)
+void showLidarTopview(std::vector<LidarPoint> &lidarPoints, cv::Size worldSize, 
+        cv::Size imageSize, const std::string & message, bool bWait)
 {
     // create topview image
     cv::Mat topviewImg(imageSize, CV_8UC3, cv::Scalar(0, 0, 0));
@@ -80,9 +81,12 @@ void showLidarTopview(std::vector<LidarPoint> &lidarPoints, cv::Size worldSize, 
     }
 
     // display image
-    string windowName = "Top-View Perspective of LiDAR data";
-    cv::namedWindow(windowName, 2);
-    cv::imshow(windowName, topviewImg);
+    if (SHOW_WINDOWS) {
+        string windowName = "Top-View Perspective of LiDAR data -- " + message;
+        cv::namedWindow(windowName, 2);
+        cv::imshow(windowName, topviewImg);
+    }
+    cv::imwrite("../results/TopView_" + message + ".jpg", topviewImg);
     if(bWait)
     {
         cv::waitKey(0); // wait for key to be pressed

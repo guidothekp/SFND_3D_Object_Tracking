@@ -68,11 +68,11 @@ void clusterLidarWithROI(std::vector<BoundingBox> &boundingBoxes, std::vector<Li
  * However, you can make this function work for other sizes too.
  * For instance, to use a 1000x1000 size, adjusting the text positions by dividing them by 2.
  */
-void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, cv::Size imageSize, bool bWait)
+void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, cv::Size imageSize, 
+        const std::string & message, bool bWait)
 {
     // create topview image
     cv::Mat topviewImg(imageSize, CV_8UC3, cv::Scalar(255, 255, 255));
-
     for(auto it1=boundingBoxes.begin(); it1!=boundingBoxes.end(); ++it1)
     {
         // create randomized color for current 3D object
@@ -111,9 +111,10 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
         // augment object with some key data
         char str1[200], str2[200];
         sprintf(str1, "id=%d, #pts=%d", it1->boxID, (int)it1->lidarPoints.size());
-        putText(topviewImg, str1, cv::Point2f(left-250, bottom+50), cv::FONT_ITALIC, 2, currColor);
-        sprintf(str2, "xmin=%2.2f m, yw=%2.2f m", xwmin, ywmax-ywmin);
-        putText(topviewImg, str2, cv::Point2f(left-250, bottom+125), cv::FONT_ITALIC, 2, currColor);  
+        //putText(topviewImg, str1, cv::Point2f(left-250, bottom+50), cv::FONT_ITALIC, 2, currColor);
+        putText(topviewImg, str1, cv::Point2f(left-250, bottom+50), cv::FONT_ITALIC | cv::FONT_HERSHEY_TRIPLEX , 2, currColor);
+        sprintf(str2, "xw=%2.2f m, yw=%2.2f m", xwmin, ywmax-ywmin);
+        putText(topviewImg, str2, cv::Point2f(left-250, bottom+125), cv::FONT_ITALIC | cv::FONT_HERSHEY_TRIPLEX , 2, currColor);  
     }
 
     // plot distance markers
@@ -126,36 +127,116 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
     }
 
     // display image
-    string windowName = "3D Objects";
-    cv::namedWindow(windowName, 1);
-    cv::imshow(windowName, topviewImg);
-
+    if (SHOW_WINDOWS) {
+        string windowName = "3D Objects -- " + message;
+        cv::namedWindow(windowName, 1);
+        cv::imshow(windowName, topviewImg);
+    }
+    cv::imwrite("../results/3dObject_" + message + ".jpg", topviewImg); 
     if(bWait)
     {
         cv::waitKey(0); // wait for key to be pressed
     }
 }
 
-
 // associate a given bounding box with the keypoints it contains
-void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
+void clusterKptMatchesWithROI(BoundingBox &boundingBox, 
+        const std::vector<cv::KeyPoint> &kptsPrev, 
+        const std::vector<cv::KeyPoint> &kptsCurr, 
+        const std::vector<cv::DMatch> &kptMatches)
 {
-    // ...
+    const cv::Rect & roi = boundingBox.roi;
+    std::vector<cv::DMatch> & matches = boundingBox.kptMatches;
+    //std::cout << "kptMatches size = " << kptMatches.size() << std::endl;
+    std::unordered_map<size_t, double> matchToDistance;
+    double sum = 0.0;
+    for (int i = 0; i < kptMatches.size(); i ++) {
+        auto & match = kptMatches.at(i);
+        auto & point = kptsCurr[match.trainIdx].pt;
+        if (!roi.contains(point)) {
+            continue;
+        }
+        auto & currPoint = kptsCurr[match.trainIdx].pt;
+        auto & prevPoint = kptsPrev[match.queryIdx].pt;
+        auto distance = cv::norm(currPoint - prevPoint);
+        matchToDistance[i] = distance;
+        sum += distance;
+    }
+    //std::cout << "BB filter size = " << matchToDistance.size() << std::endl;
+    double mean = sum/matchToDistance.size();
+    double sd = 0.0;
+    for (auto it = matchToDistance.begin(); it != matchToDistance.end(); it ++) {
+        sd += pow(it->second - mean, 2);
+    }
+    sd = sqrt(sd/matchToDistance.size());
+    for (auto it = matchToDistance.begin(); it != matchToDistance.end(); it ++) {
+        if (it->second <= sd) {
+            matches.push_back(kptMatches[it->first]);
+        }
+    }
+    //std::cout << "matches size final = " << boundingBox.kptMatches.size() << std::endl;
 }
 
 
 // Compute time-to-collision (TTC) based on keypoint correspondences in successive images
-void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
-        std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC, cv::Mat *visImg)
+void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, 
+        std::vector<cv::KeyPoint> &kptsCurr, 
+        std::vector<cv::DMatch> kptMatches, double frameRate, 
+        double &TTC, cv::Mat *visImg)
 {
-    // ...
+    std::vector<double> distRatios;
+    for (auto it1 = kptMatches.begin(); it1 != kptMatches.end() - 1; it1 ++) {
+        cv::KeyPoint & kpOuterCurr = kptsCurr.at(it1->trainIdx);
+        cv::KeyPoint & kpOuterPrev = kptsPrev.at(it1->queryIdx);
+        for (auto it2 = kptMatches.begin() + 1; 
+                it2 != kptMatches.end(); it2 ++) {
+            double minDist = 100;
+            cv::KeyPoint & kpInnerCurr = kptsCurr.at(it2->trainIdx);
+            cv::KeyPoint & kpInnerPrev = kptsPrev.at(it2->queryIdx);
+            double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
+            double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
+            if (distPrev > std::numeric_limits<double>::epsilon()
+                    && distCurr >= minDist) {
+                double distRatio = distCurr/distPrev;
+                distRatios.push_back(distRatio);
+            }
+        }
+    }
+    if (distRatios.size() == 0) {
+        TTC = NAN;
+        return;
+    }
+    std::sort(distRatios.begin(), distRatios.end());
+    size_t size = distRatios.size();
+    size_t first = size/2, second = size % 2? first : first - 1;
+    double medianDistRatio = 0.5 * (distRatios[first] + distRatios[second]);
+    /*if (medianDistRatio == 1) {
+        TTC = NAN;
+        return;
+    }*/
+    TTC = -1/(1 - medianDistRatio)/frameRate;
+    //std::cout << "TTC camera = " << TTC << std::endl;
 }
-
 
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
         std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
-    // ...
+    //we are provided points that are more or less the rear bumper
+    //we can sort the lidar points along x axis and take the median to drop the
+    //outliers.
+    auto sorter = [](LidarPoint & a, LidarPoint & b) {
+        return a.x < b.x;
+    };
+    auto median = [](std::vector<LidarPoint> & v) {
+        return v[v.size()/2 /*+ 25*/];
+    };
+    std::sort(lidarPointsPrev.begin(), lidarPointsPrev.end(), sorter);
+    std::sort(lidarPointsCurr.begin(), lidarPointsCurr.end(), sorter);
+    double prevX = median(lidarPointsPrev).x,
+           currX = median(lidarPointsCurr).x;
+    TTC = currX/(prevX - currX)/frameRate;
+    //std::cout << "TTC = " << TTC << std::endl;
+    //std::cout << "Count of Lidar points = " << lidarPointsCurr.size() << std::endl;
 }
 
 using queryIndex = int; 
@@ -168,7 +249,7 @@ void convertMatchesToBBoxes(const std::vector<cv::DMatch> & matches,
     //assume that the data is not clean and a single queryIndex maps to
     //multiple matches.
     for (const auto & match : matches) {
-        queryIndex q = match.queryIdx;
+        const queryIndex & q = match.queryIdx;
         if (queryMapping.find(q) == queryMapping.end()) {
             continue;
         }
@@ -180,13 +261,19 @@ void convertMatchesToBBoxes(const std::vector<cv::DMatch> & matches,
         sv = queryIndexToMatches.at(q); //cannot fail
         sv->push_back(const_cast<cv::DMatch*>(&match));
     }
+    /*
     for (auto it = queryIndexToMatches.begin();
             it != queryIndexToMatches.end(); it ++) {
         assert(it->second->size() <= 1);
     }
-    std::cout << "query size = " << queryIndexToMatches.size() << std::endl;
-    assert(queryIndexToMatches.size() == queryMapping.size());
+    */
+    //std::cout << "query size = " << queryIndexToMatches.size() << std::endl;
+    //assert(queryIndexToMatches.size() == queryMapping.size());
     for (auto it = queryMapping.begin(); it != queryMapping.end(); it ++) {
+        if (queryIndexToMatches.find(it->first) == queryIndexToMatches.end()) {
+            //likely no matches because this did not fall into a BB.
+            continue;
+        }
         std::vector<cv::DMatch*>* match = queryIndexToMatches.at(it->first);
         trainIndex t = match->at(0)->trainIdx;
         if (trainingMapping.find(t) == trainingMapping.end()) {
@@ -194,8 +281,15 @@ void convertMatchesToBBoxes(const std::vector<cv::DMatch> & matches,
         }
         BoundingBoxID qB = it->second;
         BoundingBoxID tB = trainingMapping.at(t);
+        /*if (bbBestMatches.find(qB) != bbBestMatches.end() &&
+                bbBestMatches[qB] != tB) {
+            std::cout << qB << " has already been matched ";
+            std::cout << "to " << bbBestMatches[qB] << "!\n"; 
+            std::cout << " over written by " << tB << "\n";
+        }*/
         bbBestMatches[qB] = tB;
     }
+    //std::cout << "---------\n";
 }
 std::unordered_map<int, BoundingBoxID> prepareKeyPointBoundingBoxID(
         const DataFrame & frame);
@@ -252,21 +346,22 @@ std::unordered_map<int, BoundingBoxID> prepareKeyPointBoundingBoxID(
                 if (bbCount.find(bbptr) == bbCount.end()) {
                     bbCount[bbptr] = 0;
                 }
-                bbCount[bbptr] += 1;
+                //bbCount[bbptr] += 1;
             }
         }
     }
     //at this point we have a map of keypoint to matching bounding boxes.
-    std::unordered_map<cv::KeyPoint*, BoundingBoxID> rmap;
+    std::unordered_map<cv::KeyPoint*, BoundingBoxID> kpToBBID;
     std::vector<cv::KeyPoint*> toRemove;
     std::vector<cv::KeyPoint*> conflicts;
-    std::cout << "mapping size = " << mapping.size() << std::endl;
+    //std::cout << "mapping size = " << mapping.size() << std::endl;
     for (auto it = mapping.begin(); it != mapping.end(); it ++) {
         std::vector<BoundingBox*>* sv = it->second;
-        BoundingBox* bbptr = sv->at(0);
         if (sv->size() == 1) {
-            rmap[it->first]  = bbptr->boxID;
+            BoundingBox* bbptr = sv->at(0);
+            kpToBBID[it->first]  = bbptr->boxID;
             toRemove.push_back(it->first);
+            bbCount[bbptr] += 1;
         } else {
             conflicts.push_back(it->first);
         }
@@ -276,17 +371,17 @@ std::unordered_map<int, BoundingBoxID> prepareKeyPointBoundingBoxID(
     for (cv::KeyPoint* kp : conflicts) {
         std::vector<BoundingBox*>* sv = mapping.at(kp);
         assert(sv->size() > 1);
-        size_t max = 0;
+        int max = -1;
         BoundingBox* maxBox;
         for (auto it2 = sv->begin(); it2 != sv->end(); it2 ++) {
             BoundingBox* bb = *it2;
-            size_t count = bbCount.at(bb);
+            int count = bbCount.at(bb);
             if (count > max) {
                 max = count;
                 maxBox = bb;
             }
         }
-        rmap[kp] = maxBox->boxID;
+        kpToBBID[kp] = maxBox->boxID;
         toRemove.push_back(kp);
     }
     assert(mapping.size() == toRemove.size());
@@ -300,7 +395,7 @@ std::unordered_map<int, BoundingBoxID> prepareKeyPointBoundingBoxID(
     conflicts.clear();
     toRemove.clear();
     std::unordered_map<int, BoundingBoxID> rv;
-    for (auto it = rmap.begin(); it != rmap.end(); it ++) {
+    for (auto it = kpToBBID.begin(); it != kpToBBID.end(); it ++) {
         rv[keyPointToIdx[it->first]] = it->second;
     }
     return rv;

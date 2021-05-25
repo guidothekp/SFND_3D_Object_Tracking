@@ -1,0 +1,301 @@
+#1 : LOAD IMAGE INTO BUFFER done
+[ INFO:0] global /Users/kamesh/work/development/opencv/modules/core/src/parallel/registry_parallel.impl.hpp (96) ParallelBackendRegistry core(parallel): Enabled backends(3, sorted by priority): ONETBB(1000); TBB(990); OPENMP(980)
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 784
+mapping size = 835
+query size = 784
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 12.9096
+Count of Lidar points = 338
+kptMatches size = 1630
+BB filter size = 111
+matches size final = 83
+TTC camera = 15.0804
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 835
+mapping size = 852
+query size = 835
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 11.5
+Count of Lidar points = 305
+kptMatches size = 1662
+BB filter size = 105
+matches size final = 79
+TTC camera = 13.0249
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 852
+mapping size = 1006
+query size = 852
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 15.7701
+Count of Lidar points = 321
+kptMatches size = 1717
+BB filter size = 110
+matches size final = 85
+TTC camera = 13.2618
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 1006
+mapping size = 954
+query size = 1006
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 16.6765
+Count of Lidar points = 319
+kptMatches size = 1752
+BB filter size = 114
+matches size final = 84
+TTC camera = 13.9742
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 954
+mapping size = 905
+query size = 954
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 905
+mapping size = 930
+query size = 905
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 12.0687
+Count of Lidar points = 345
+kptMatches size = 1689
+BB filter size = 126
+matches size final = 90
+TTC camera = 11.426
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 930
+mapping size = 972
+query size = 930
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 12.5623
+Count of Lidar points = 315
+kptMatches size = 1736
+BB filter size = 122
+matches size final = 95
+TTC camera = 13.044
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 972
+mapping size = 917
+query size = 972
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 12.6717
+Count of Lidar points = 307
+kptMatches size = 1758
+BB filter size = 119
+matches size final = 90
+TTC camera = 13.9251
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 917
+mapping size = 926
+query size = 917
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 13.2386
+Count of Lidar points = 302
+kptMatches size = 1757
+BB filter size = 107
+matches size final = 87
+TTC camera = 11.6421
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 926
+mapping size = 953
+query size = 926
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 11.6906
+Count of Lidar points = 278
+kptMatches size = 1778
+BB filter size = 114
+matches size final = 86
+TTC camera = 41.2889
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 953
+mapping size = 971
+query size = 953
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 971
+mapping size = 1026
+query size = 971
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 9.17501
+Count of Lidar points = 300
+kptMatches size = 1787
+BB filter size = 115
+matches size final = 88
+TTC camera = 11.8354
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 1026
+mapping size = 1047
+query size = 1026
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 9.68663
+Count of Lidar points = 314
+kptMatches size = 1794
+BB filter size = 127
+matches size final = 96
+TTC camera = 11.4732
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 1047
+mapping size = 1085
+query size = 1047
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 9.58669
+Count of Lidar points = 305
+kptMatches size = 1769
+BB filter size = 110
+matches size final = 91
+TTC camera = 12.8031
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 1085
+mapping size = 1121
+query size = 1085
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 8.26047
+Count of Lidar points = 286
+kptMatches size = 1776
+BB filter size = 110
+matches size final = 85
+TTC camera = 10.5009
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 1121
+mapping size = 1050
+query size = 1121
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 9.90562
+Count of Lidar points = 288
+kptMatches size = 1849
+BB filter size = 129
+matches size final = 94
+TTC camera = 11.4542
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 1050
+mapping size = 1065
+query size = 1050
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 10.2427
+Count of Lidar points = 273
+kptMatches size = 1778
+BB filter size = 114
+matches size final = 85
+TTC camera = 9.69202
+#1 : LOAD IMAGE INTO BUFFER done
+#2 : DETECT & CLASSIFY OBJECTS done
+#3 : CROP LIDAR POINTS done
+#4 : CLUSTER LIDAR POINT CLOUD done
+#5 : DETECT KEYPOINTS done
+#6 : EXTRACT DESCRIPTORS done
+#7 : MATCH KEYPOINT DESCRIPTORS done
+mapping size = 1065
+mapping size = 1099
+query size = 1065
+#8 : TRACK 3D OBJECT BOUNDING BOXES done
+TTC = 8.39388
+Count of Lidar points = 295
+kptMatches size = 1815
+BB filter size = 113
+matches size final = 91
+TTC camera = 10.2774

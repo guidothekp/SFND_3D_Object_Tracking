@@ -1,0 +1,2 @@
+[ INFO:0] global /Users/kamesh/work/development/opencv/modules/core/src/parallel/registry_parallel.impl.hpp (96) ParallelBackendRegistry core(parallel): Enabled backends(3, sorted by priority): ONETBB(1000); TBB(990); OPENMP(980)
+imgIndex = 1
