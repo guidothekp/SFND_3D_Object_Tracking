@@ -111,9 +111,9 @@ big.
 
 Topview of Frame #2 vs Frame #3
 Frame #2:
-*<img src="report/3dObject_2.jpg" height="500" width="779"/>
+* <img src="report/3dObject_2.jpg" height="500" width="779"/>
 Frame #3:
-*<img src="report/3dObject_3.jpg" height="500" width="779"/>
+* <img src="report/3dObject_3.jpg" height="500" width="779"/>
 
 The remaining pictures can be seen in the reports folder under
 3dObject_number.jpg.
